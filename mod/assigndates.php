@@ -73,5 +73,16 @@ extends report_editdates_mod_date_extractor {
         $module->update_calendar($cm->id);
 
         $module->update_gradebook(false, $cm->id);
+
+        if (!empty($cm->idnumber)) {
+            // Sync idnumber with grade_item.
+            if ($gradeitem = grade_item::fetch(array('itemtype' => 'mod', 'itemmodule' => 'assign',
+                         'iteminstance' => $cm->instance, 'itemnumber' => 0, 'courseid' => $COURSE->id))) {
+                if ($gradeitem->idnumber != $cm->idnumber) {
+                    $gradeitem->idnumber = $cm->idnumber;
+                    $gradeitem->update();
+                }
+            }
+        }
     }
 }
